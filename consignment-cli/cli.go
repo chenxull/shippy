@@ -4,18 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
-	"google.golang.org/grpc"
+	"github.com/micro/go-micro/cmd"
 
 	pd "github.com/chenxull/shippy/consignment-service/proto/consignment"
+	microclient "github.com/micro/go-micro/client"
 )
 
 const (
-	ADDRESS           = "localhost:50051"
+	//ADDRESS           = "localhost:50051"
 	DEFAULT_INFO_FILE = "consignment.json"
 )
 
@@ -36,22 +36,14 @@ func parseFile(fileName string) (*pd.Consignment, error) {
 }
 
 func main() {
-	//连接到gRPC服务器
-	conn, err := grpc.Dial(ADDRESS, grpc.WithInsecure())
-	if err != nil {
-		log.Fatal("connect error ", err)
-	}
-	defer conn.Close()
-
-	//初始化gRPC服务器
-	client := pd.NewShippingServiceClient(conn)
-
+	cmd.Init()
+	client := pd.NewShippingServiceClient("go.micro.srv.consignment", microclient.DefaultClient)
 	//在命令行中指定新的货物信息json文件
 	infoFile := DEFAULT_INFO_FILE
 	if len(os.Args) > 1 {
 		infoFile = os.Args[1]
 	}
-	fmt.Println(infoFile)
+	//fmt.Println(infoFile)
 	//解析货物信息
 	consignment, err := parseFile(infoFile)
 	if err != nil {
@@ -59,19 +51,19 @@ func main() {
 	}
 
 	//使用CreateConsignment创建了一个发送货物的请求
-	resp, err := client.CreateConsignment(context.Background(), consignment)
+	r, err := client.CreateConsignment(context.TODO(), consignment)
 	if err != nil {
 		log.Fatal("create consignment error ", err)
 	}
-	log.Printf("created:%t", resp.Created)
+	log.Printf("created:%t", r.Created)
 
 	// 列出目前所有托运的货物
-	resp, err = client.GetConsignment(context.Background(), &pd.GetRequest{})
+	getAll, err := client.GetConsignment(context.Background(), &pd.GetRequest{})
 	if err != nil {
 		log.Fatal("failed to list consignment", err)
 	}
-
-	for _, c := range resp.Consignments {
-		log.Printf("%+v", c)
+	//fmt.Println(getAll)
+	for _, c := range getAll.Consignments {
+		log.Println(c)
 	}
 }
