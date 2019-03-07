@@ -1,0 +1,11 @@
+package: github.com/chenxull/shippy
+import:
+- package: github.com/golang/protobuf
+  subpackages:
+  - proto
+- package: github.com/micro/go-micro
+  subpackages:
+  - client
+  - cmd
+  - server
+- package: golang.org/x/net/context
