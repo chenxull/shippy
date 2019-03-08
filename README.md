@@ -13,7 +13,11 @@
 ![](https://images.yinzige.com/2018-05-22-094448.png)
 
 
-
+### 2019.3.8
+1. 对`consignment-service`和`vessel-service`模块的代码进行重构，将业务逻辑和服务交互逻辑从主文件中提取出来，使得代码结构更加符合实际
+2. 增加`user-service`和`user-cli`
+3. 使用 GORM 库与 Postgres 数据库进行交互，并将命令行的数据存储进去
+4. 使用docker-compose对各个组件进行统一管理
 ## 运行
 
 每个微服务都使用`docker`进行封装，`Makefile`进行编译。可以通过如下步骤启动整个服务：
@@ -39,3 +43,5 @@
  **原因**
  中文代码中存在问题，其定义的接口类型`IRepository`没有使用上，将其改为`Repository`后,并将原来的`Repository`结构体改为了`ConsignmentRepository`
 。重新进行编译即可成功运行
+
+### NO.3 
