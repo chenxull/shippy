@@ -6,10 +6,10 @@ import (
 	"os"
 
 	pb "github.com/chenxull/shippy/user-service/proto/user"
-	microclient "github.com/micro/go-micro/client"
-
 	"github.com/micro/cli"
 	micro "github.com/micro/go-micro"
+	microclient "github.com/micro/go-micro/client"
+
 	"github.com/micro/go-micro/cmd"
 )
 
@@ -17,10 +17,9 @@ func main() {
 
 	cmd.Init()
 
-	// 创建 user-service 微服务的客户端
+	// Create new greeter client
 	client := pb.NewUserServiceClient("go.micro.srv.user", microclient.DefaultClient)
 
-	// 设置命令行参数
 	service := micro.NewService(
 		micro.Flags(
 			cli.StringFlag{
@@ -43,7 +42,9 @@ func main() {
 	)
 
 	service.Init(
+
 		micro.Action(func(c *cli.Context) {
+
 			name := c.String("name")
 			email := c.String("email")
 			password := c.String("password")
@@ -58,7 +59,7 @@ func main() {
 			if err != nil {
 				log.Fatalf("Could not create: %v", err)
 			}
-			log.Printf("Created: %v", r.User.Id)
+			log.Printf("Created: %t", r.User.Id)
 
 			getAll, err := client.GetAll(context.Background(), &pb.Request{})
 			if err != nil {
@@ -68,11 +69,12 @@ func main() {
 				log.Println(v)
 			}
 
+			// let's just exit because
 			os.Exit(0)
 		}),
 	)
 
-	// 启动客户端
+	// Run the server
 	if err := service.Run(); err != nil {
 		log.Println(err)
 	}

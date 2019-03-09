@@ -3,4 +3,4 @@ build:
 	docker build -t user-cli .
 
 run:
-	docker run --rm -e MICRO_REGISTRY=mdns user-cli
+	docker run --rm -e MICRO_REGISTRY=mdns user-cli 
